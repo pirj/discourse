@@ -28,6 +28,7 @@ export default class DiscourseTooltip extends Component {
         content: element,
         theme: "d-tooltip",
         arrow: false,
+        placement: "bottom-start",
       });
     });
   }
