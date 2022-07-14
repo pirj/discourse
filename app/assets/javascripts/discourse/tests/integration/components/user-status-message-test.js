@@ -27,6 +27,25 @@ module("Integration | Component | user-status-message", function (hooks) {
     assert.ok(exists("img.emoji[alt='tooth']"), "the status emoji is shown");
   });
 
+  test("it doesn't render status description by default", async function (assert) {
+    this.set("status", { emoji: "tooth", description: "off to dentist" });
+    await render(hbs`<UserStatusMessage @status={{this.status}} />`);
+    assert.notOk(exists(".user-status-message-description"));
+  });
+
+  test("it renders status description if enabled", async function (assert) {
+    this.set("status", { emoji: "tooth", description: "off to dentist" });
+    await render(hbs`
+      <UserStatusMessage
+       @status={{this.status}}
+       @showDescription=true/>
+    `);
+    assert.equal(
+      query(".user-status-message-description").innerText.trim(),
+      "off to dentist"
+    );
+  });
+
   test("it shows the until TIME on the tooltip if status will expire today", async function (assert) {
     this.clock = fakeTime(
       "2100-02-01T08:00:00.000Z",
