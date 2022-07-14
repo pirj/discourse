@@ -1,4 +1,4 @@
-<div class="user-status-message">
+<span class="user-status-message">
   {{emoji @status.emoji skipTitle=true}}
   {{#if @showDescription}}
     <span class="user-status-message-description">
@@ -6,10 +6,16 @@
     </span>
   {{/if}}
   <DTooltip>
-    {{emoji @status.emoji skipTitle=true}}
-    {{@status.description}}
-    {{#if this.until}}
-      <span class="status-until">{{this.until}}</span>
-    {{/if}}
+    <div class="user-status-message-tooltip">
+      {{emoji @status.emoji skipTitle=true}}
+      <span class="user-status-tooltip-description">
+        {{@status.description}}
+      </span>
+      {{#if this.until}}
+        <div class="user-status-tooltip-until">
+          {{this.until}}
+        </div>
+      {{/if}}
+    </div>
   </DTooltip>
-</div>
+</span>
