@@ -24,98 +24,39 @@ export default class TopicTimelineScrollArea extends GlimmerComponent {
   before = this.scrollareaRemaining() * this.percentage;
   after = this.scrollareaHeight() - this.args.before - SCROLLER_HEIGHT;
 
-  @bind
-  updatePercentage(percentage) {
-    if (!percentage) {
-      this.percentage = this._percentFor(
-        this.args.topic,
-        this.args.enteredIndex + 1
-      );
-    }
+  get percentage() {
+    return this._percentFor(this.args.topic, this.args.enteredIndex + 1);
+  }
 
-    this.percentage = percentage;
+  get showButton() {
+    return false;
+  }
+
+  get position() {
+    return null;
+  }
+
+  get lastRead() {
+    return null;
+  }
+
+  get lastReadTop() {
+    return null;
+  }
+
+  get lastReadPercentage() {
+    return null;
+  }
+
+  get scrolledPost() {
+    return null;
   }
 
   @bind
-  updateShowButton(showButton) {
-    if (!showButton) {
-      this.showButton = false;
+  updateValue(arg, value) {
+    if (arg && value) {
+      arg = value;
     }
-
-    this.showButton = showButton;
-  }
-
-  @bind
-  updatePosition(position) {
-    if (!position) {
-      this.position = null;
-    }
-
-    this.position = position;
-  }
-
-  @bind
-  updateCurrent(current) {
-    if (current) {
-      this.current = current;
-    }
-  }
-
-  @bind
-  updateScrollPosition(scrollPosition) {
-    if (scrollPosition) {
-      this.scrollPosition = scrollPosition;
-    }
-  }
-
-  @bind
-  updateTotal(total) {
-    if (total) {
-      this.total = total;
-    }
-  }
-
-  @bind
-  updateDate(date) {
-    if (date) {
-      this.date = date;
-    }
-  }
-
-  @bind
-  updateLastRead(lastRead) {
-    if (!lastRead) {
-      this.lastRead = null;
-    }
-
-    this.lastRead = lastRead;
-  }
-
-  @bind
-  updateLastReadTop(lastReadTop) {
-    if (!lastReadTop) {
-      this.lastReadTop = null;
-    }
-
-    this.lastReadTop = lastReadTop;
-  }
-
-  @bind
-  updateLastReadPercentage(readPercentage) {
-    if (!readPercentage) {
-      this.readPercentage = null;
-    }
-
-    this.readPercentage = readPercentage;
-  }
-
-  @bind
-  updateScrolledPost(scrolledPost) {
-    if (!scrolledPost) {
-      this.scrolledPost = 1;
-    }
-
-    this.scrolledPost = scrolledPost;
   }
 
   get lastReadTop() {
@@ -162,18 +103,18 @@ export default class TopicTimelineScrollArea extends GlimmerComponent {
       date = null;
     }
 
-    this.updateCurrent(current);
-    this.updateScrollPosition(scrollPosition);
-    this.updateTotal(total);
-    this.updateDate(date);
+    this.updateValue(this.current, current);
+    this.updateValue(this.scrollPosition, scrollPosition);
+    this.updateValue(this.total, total);
+    this.updateValue(this.date, date);
 
     const lastReadId = topic.last_read_post_id;
     const lastReadNumber = topic.last_read_post_number;
 
     if (lastReadId && lastReadNumber) {
       const idx = postStream.get("stream").indexOf(lastReadId) + 1;
-      this.updateLastRead(idx);
-      this.updateLastReadPercentage(this._percentFor(topic, idx));
+      this.updateValue(this.read, idx);
+      this.updateValue(this.lastReadPercentage, this._percentFor(topic, idx));
     }
 
     if (this.args.position !== this.scrollPosition) {
@@ -186,7 +127,7 @@ export default class TopicTimelineScrollArea extends GlimmerComponent {
     super(...arguments);
 
     this.calculatePosition();
-    this.updateScrolledPost(this.current);
+    this.updateValue(this.scrolledPost, this.current);
     const percentage = this.percentage;
     if (percentage === null) {
       return;
@@ -208,14 +149,14 @@ export default class TopicTimelineScrollArea extends GlimmerComponent {
       );
       showButton =
         before + SCROLLER_HEIGHT - 5 < lastReadTop || before > lastReadTop + 25;
-      this.updateShowButton(showButton);
+      this.updateValue(this.showButton, showButton);
     }
 
     if (hasBackPosition) {
       const lastReadTop = Math.round(
         position.lastReadPercentage * scrollareaHeight()
       );
-      this.updateLastReadTop(lastReadTop);
+      this.updateValue(this.lastReadTop, lastReadTop);
     }
   }
 
@@ -231,7 +172,7 @@ export default class TopicTimelineScrollArea extends GlimmerComponent {
 
   commit() {
     this.calculatePosition();
-    this.updateScrolledPost(this.current);
+    this.updateValue(this.scrolledPost, this.current);
 
     if (this.current === this.scrollPosition) {
       this.sendWidgetAction("jumpToIndex", this.current);
