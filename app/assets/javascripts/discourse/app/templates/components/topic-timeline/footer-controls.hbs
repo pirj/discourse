@@ -7,7 +7,7 @@
 
   {{#if (and this.currentUser (not @fullscreen))}}
     {{#if this.canCreatePost}}
-      <button type="button" class="btn-default create reply-to-post" title={{i18n "topic.reply.help"}} {{on "click" (fn @replyToPost null)}}>
+      <button type="button" class="btn btn-default create reply-to-post no-text btn-icon" title={{i18n "topic.reply.help"}} {{on "click" (fn @replyToPost null)}}>
         {{d-icon "reply"}}
       </button>
     {{/if}}

@@ -1,19 +1,141 @@
 import GlimmerComponent from "discourse/components/glimmer";
 import { bind } from "discourse-common/utils/decorators";
+import { tracked } from "@glimmer/tracking";
+import { action } from "@ember/object";
 
 const SCROLLER_HEIGHT = 50;
 const LAST_READ_HEIGHT = 20;
 const MIN_SCROLLAREA_HEIGHT = 170;
 const MAX_SCROLLAREA_HEIGHT = 300;
 
-export default class TopicTimelineScrollarea extends GlimmerComponent {
+export default class TopicTimelineScrollArea extends GlimmerComponent {
+  @tracked showButton;
+  @tracked scrollPosition;
+  @tracked current;
+  @tracked percentage;
+  @tracked total;
+  @tracked date;
+  @tracked lastRead;
+  @tracked lastReadPercentage;
+  @tracked position;
+
   buildKey = `timeline-scrollarea-${this.args.topic.id}`;
   style = `height: ${this.scrollareaHeight()}px`;
-  percentage = this._percentFor(this.args.topic, this.args.enteredIndex + 1);
-  scrolledPost = 1;
+  before = this.scrollareaRemaining() * this.percentage;
+  after = this.scrollareaHeight() - this.args.before - SCROLLER_HEIGHT;
 
-  position() {
-    const percentage = this.args.percentage;
+  @bind
+  updatePercentage(percentage) {
+    if (!percentage) {
+      this.percentage = this._percentFor(
+        this.args.topic,
+        this.args.enteredIndex + 1
+      );
+    }
+
+    this.percentage = percentage;
+  }
+
+  @bind
+  updateShowButton(showButton) {
+    if (!showButton) {
+      this.showButton = false;
+    }
+
+    this.showButton = showButton;
+  }
+
+  @bind
+  updatePosition(position) {
+    if (!position) {
+      this.position = null;
+    }
+
+    this.position = position;
+  }
+
+  @bind
+  updateCurrent(current) {
+    if (current) {
+      this.current = current;
+    }
+  }
+
+  @bind
+  updateScrollPosition(scrollPosition) {
+    if (scrollPosition) {
+      this.scrollPosition = scrollPosition;
+    }
+  }
+
+  @bind
+  updateTotal(total) {
+    if (total) {
+      this.total = total;
+    }
+  }
+
+  @bind
+  updateDate(date) {
+    if (date) {
+      this.date = date;
+    }
+  }
+
+  @bind
+  updateLastRead(lastRead) {
+    if (!lastRead) {
+      this.lastRead = null;
+    }
+
+    this.lastRead = lastRead;
+  }
+
+  @bind
+  updateLastReadTop(lastReadTop) {
+    if (!lastReadTop) {
+      this.lastReadTop = null;
+    }
+
+    this.lastReadTop = lastReadTop;
+  }
+
+  @bind
+  updateLastReadPercentage(readPercentage) {
+    if (!readPercentage) {
+      this.readPercentage = null;
+    }
+
+    this.readPercentage = readPercentage;
+  }
+
+  @bind
+  updateScrolledPost(scrolledPost) {
+    if (!scrolledPost) {
+      this.scrolledPost = 1;
+    }
+
+    this.scrolledPost = scrolledPost;
+  }
+
+  get lastReadTop() {
+    return Math.round(this.lastReadPercentage * this.scrollareaHeight());
+  }
+
+  get hasBackPosition() {
+    return (
+      this.lastRead &&
+      this.lastRead > 3 &&
+      this.lastRead > this.current &&
+      Math.abs(this.lastRead - this.current) > 3 &&
+      Math.abs(this.lastRead - this.total) > 1 &&
+      this.lastRead !== this.total
+    );
+  }
+
+  @bind
+  calculatePosition() {
+    const percentage = this.percentage;
     const topic = this.args.topic;
     const postStream = topic.get("postStream");
     const total = postStream.get("filteredPostsCount");
@@ -40,53 +162,45 @@ export default class TopicTimelineScrollarea extends GlimmerComponent {
       date = null;
     }
 
-    const result = {
-      current,
-      scrollPosition,
-      total,
-      date,
-      lastRead: null,
-      lastReadPercentage: null,
-    };
+    this.updateCurrent(current);
+    this.updateScrollPosition(scrollPosition);
+    this.updateTotal(total);
+    this.updateDate(date);
 
     const lastReadId = topic.last_read_post_id;
     const lastReadNumber = topic.last_read_post_number;
 
     if (lastReadId && lastReadNumber) {
       const idx = postStream.get("stream").indexOf(lastReadId) + 1;
-      result.lastRead = idx;
-      result.lastReadPercentage = this._percentFor(topic, idx);
+      this.updateLastRead(idx);
+      this.updateLastReadPercentage(this._percentFor(topic, idx));
     }
 
-    if (this.state.position !== result.scrollPosition) {
+    if (this.args.position !== this.scrollPosition) {
       this.state.position = result.scrollPosition;
-      // we are going to need a function here to update value - maybe @tracked
       this.sendWidgetAction("updatePosition", current);
     }
-
-    return result;
   }
 
-  html(attrs, state) {
-    const position = this.position();
+  constructor() {
+    super(...arguments);
 
-    state.scrolledPost = position.current;
-    const percentage = state.percentage;
+    this.calculatePosition();
+    this.updateScrolledPost(this.current);
+    const percentage = this.percentage;
     if (percentage === null) {
       return;
     }
 
     const before = this.scrollareaRemaining() * percentage;
-    const after = this.scrollareaHeight() - before - SCROLLER_HEIGHT;
 
-    let showButton = false;
     const hasBackPosition =
-      position.lastRead &&
-      position.lastRead > 3 &&
-      position.lastRead > position.current &&
-      Math.abs(position.lastRead - position.current) > 3 &&
-      Math.abs(position.lastRead - position.total) > 1 &&
-      position.lastRead !== position.total;
+      this.lastRead &&
+      this.lastRead > 3 &&
+      this.lastRead > this.current &&
+      Math.abs(this.lastRead - this.current) > 3 &&
+      Math.abs(this.lastRead - this.total) > 1 &&
+      this.lastRead !== this.total;
 
     if (hasBackPosition) {
       const lastReadTop = Math.round(
@@ -94,36 +208,18 @@ export default class TopicTimelineScrollarea extends GlimmerComponent {
       );
       showButton =
         before + SCROLLER_HEIGHT - 5 < lastReadTop || before > lastReadTop + 25;
+      this.updateShowButton(showButton);
     }
-
-    let scrollerAttrs = position;
-    scrollerAttrs.showDockedButton =
-      !attrs.mobileView && hasBackPosition && !showButton;
-    scrollerAttrs.fullScreen = attrs.fullScreen;
-    scrollerAttrs.topicId = attrs.topic.id;
-
-    const result = [
-      this.attach("timeline-padding", { height: before }),
-      this.attach("timeline-scroller", scrollerAttrs),
-      this.attach("timeline-padding", { height: after }),
-    ];
 
     if (hasBackPosition) {
       const lastReadTop = Math.round(
-        position.lastReadPercentage * this.scrollareaHeight()
+        position.lastReadPercentage * scrollareaHeight()
       );
-      result.push(
-        this.attach("timeline-last-read", {
-          top: lastReadTop,
-          lastRead: position.lastRead,
-          showButton,
-        })
-      );
+      this.updateLastReadTop(lastReadTop);
     }
-
-    return result;
   }
 
+  @bind
   updatePercentage(y) {
     const $area = $(".timeline-scrollarea");
     const areaTop = $area.offset().top;
@@ -134,11 +230,11 @@ export default class TopicTimelineScrollarea extends GlimmerComponent {
   }
 
   commit() {
-    const position = this.position();
-    this.state.scrolledPost = position.current;
+    this.calculatePosition();
+    this.updateScrolledPost(this.current);
 
-    if (position.current === position.scrollPosition) {
-      this.sendWidgetAction("jumpToIndex", position.current);
+    if (this.current === this.scrollPosition) {
+      this.sendWidgetAction("jumpToIndex", this.current);
     } else {
       this.sendWidgetAction("jumpEnd");
     }

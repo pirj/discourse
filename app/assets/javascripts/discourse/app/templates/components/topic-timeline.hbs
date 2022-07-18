@@ -32,7 +32,8 @@
 
   <TopicTimeline::ScrollArea
     @topic={{@model}}
-    @enteredIndex={{@model.enteredIndex}}
+    @enteredIndex={{@enteredIndex}}
+    @fullscreen={{@info.topicProgressExpanded}}
   />
 
   <TopicTimeline::FooterControls

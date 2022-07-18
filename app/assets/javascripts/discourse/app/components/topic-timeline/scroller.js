@@ -1,15 +1,16 @@
 import GlimmerComponent from "discourse/components/glimmer";
 import { bind } from "discourse-common/utils/decorators";
-createWidget("timeline-scroller", {
-  buildKey: (attrs) => `timeline-scroller-${attrs.topicId}`,
+
+export default class TopicTimelineScroller extends GlimmerComponent {
+  buildKey = `timeline-scroller-${this.args.topicId}`;
 
   defaultState() {
     return { dragging: false };
-  },
+  }
 
   buildAttributes() {
     return { style: `height: ${SCROLLER_HEIGHT}px` };
-  },
+  }
 
   html(attrs, state) {
     const { current, total, date } = attrs;
@@ -38,12 +39,12 @@ createWidget("timeline-scroller", {
     }
 
     return result;
-  },
+  }
 
   drag(e) {
     this.state.dragging = true;
     this.sendWidgetAction("updatePercentage", e.pageY);
-  },
+  }
 
   dragEnd(e) {
     this.state.dragging = false;
@@ -52,5 +53,5 @@ createWidget("timeline-scroller", {
     } else {
       this.sendWidgetAction("commit");
     }
-  },
-});
+  }
+}
