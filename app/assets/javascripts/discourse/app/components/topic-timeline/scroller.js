@@ -1,57 +1,40 @@
 import GlimmerComponent from "discourse/components/glimmer";
 import { bind } from "discourse-common/utils/decorators";
+import { tracked } from "@glimmer/tracking";
+import { SCROLLER_HEIGHT } from "discourse/components/topic-timeline/scroll-area";
+import { clamp } from "discourse/components/topic-timeline/scroll-area";
 
 export default class TopicTimelineScroller extends GlimmerComponent {
-  buildKey = `timeline-scroller-${this.args.topicId}`;
+  @tracked dragging = false;
 
-  defaultState() {
-    return { dragging: false };
+  style = `height: ${SCROLLER_HEIGHT}px`;
+
+  get repliesShort() {
+    const current = this.args.current;
+    const total = this.args.total;
+    debugger;
+    return I18n.t(`topic.timeline.replies_short`, { current, total });
   }
 
-  buildAttributes() {
-    return { style: `height: ${SCROLLER_HEIGHT}px` };
-  }
-
-  html(attrs, state) {
-    const { current, total, date } = attrs;
-
-    const contents = [
-      h(
-        "div.timeline-replies",
-        I18n.t(`topic.timeline.replies_short`, { current, total })
-      ),
-    ];
-
-    if (date) {
-      contents.push(h("div.timeline-ago", timelineDate(date)));
-    }
-
-    if (attrs.showDockedButton && !state.dragging) {
-      contents.push(attachBackButton(this));
-    }
-    let result = [
-      h("div.timeline-handle"),
-      h("div.timeline-scroller-content", contents),
-    ];
-
-    if (attrs.fullScreen) {
-      result = [result[1], result[0]];
-    }
-
-    return result;
-  }
-
+  @bind
   drag(e) {
-    this.state.dragging = true;
+    this.updateDragging(true);
+    // update to send value to parent
     this.sendWidgetAction("updatePercentage", e.pageY);
   }
 
+  @bind
   dragEnd(e) {
-    this.state.dragging = false;
+    this.updateDragging(false);
     if ($(e.target).is("button")) {
       this.sendWidgetAction("goBack");
     } else {
       this.sendWidgetAction("commit");
     }
+  }
+
+  @bind
+  updateDragging(dragging) {
+    this.dragging = dragging;
   }
 }

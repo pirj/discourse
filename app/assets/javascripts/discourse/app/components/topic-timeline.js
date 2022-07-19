@@ -7,13 +7,7 @@ import Docking from "discourse/mixins/docking";
 import { headerOffset } from "discourse/lib/offset-calculator";
 import { observes } from "discourse-common/utils/decorators";
 import optionalService from "discourse/lib/optional-service";
-
-import I18n from "I18n";
 import RawHtml from "discourse/widgets/raw-html";
-import { actionDescriptionHtml } from "discourse/widgets/post-small-action";
-import { h } from "virtual-dom";
-import { iconNode } from "discourse-common/lib/icon-library";
-import { later } from "@ember/runloop";
 import renderTags from "discourse/lib/render-tags";
 import renderTopicFeaturedLink from "discourse/lib/render-topic-featured-link";
 
@@ -25,7 +19,8 @@ export default class TopicTimeline extends GlimmerComponent {
   dockAt = null;
   dockBottom = null;
   adminTools = optionalService();
-  buildKey = (attrs) => `topic-timeline-area-${attrs.topic.id}`;
+  position = null;
+  excerpt = null;
 
   constructor() {
     super(...arguments);
@@ -63,52 +58,6 @@ export default class TopicTimeline extends GlimmerComponent {
       title: "topic.timeline.back_description",
       action: "goBack",
     });
-  }
-
-  @bind
-  defaultState() {
-    return { position: null, excerpt: null };
-  }
-
-  @bind
-  updatePosition(scrollPosition) {
-    if (!this.attrs.fullScreen) {
-      return;
-    }
-
-    this.state.position = scrollPosition;
-    this.state.excerpt = "";
-    const stream = this.attrs.topic.get("postStream");
-
-    // a little debounce to avoid flashing
-    later(() => {
-      if (!this.state.position === scrollPosition) {
-        return;
-      }
-
-      // we have an off by one, stream is zero based,
-      stream.excerpt(scrollPosition - 1).then((info) => {
-        if (info && this.state.position === scrollPosition) {
-          let excerpt = "";
-
-          if (info.username) {
-            excerpt = "<span class='username'>" + info.username + ":</span> ";
-          }
-
-          if (info.excerpt) {
-            this.state.excerpt = excerpt + info.excerpt;
-          } else if (info.action_code) {
-            this.state.excerpt = `${excerpt} ${actionDescriptionHtml(
-              info.action_code,
-              info.created_at,
-              info.username
-            )}`;
-          }
-
-          this.scheduleRerender();
-        }
-      });
-    }, 50);
   }
 
   @bind

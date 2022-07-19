@@ -1,15 +1,26 @@
 <div class="timeline-scrollarea-wrapper">
-  <TopicTimeline::Date @topic={{@topic}} @class="start-date" @onClick={{@jumpTop}} />
+  <TopicTimeline::Date
+    @topic={{@topic}}
+    @class="start-date"
+    @onClick={{@jumpTop}}
+  />
   <div class="timeline-scrollarea">
     <TopicTimeline::Padding @height={{this.before}} />
-
-    <TopicTimeline::Scroller @scrollerAttrs={{this.scrollerAttrs}} />
-
+    {{log this}}
+    <TopicTimeline::Scroller @current={{this.current}} @total={{this.total}} />
     <TopicTimeline::Padding @height={{this.after}} />
 
     {{#if this.lastReadTop}}
-      <TopicTimeline::LastRead @top={{this.lastReadTop}} @lastRead={{this.position.lastRead}} @showButton={{this.showButton}}/>
+      <TopicTimeline::LastRead
+        @top={{this.lastReadTop}}
+        @lastRead={{this.position.lastRead}}
+        @showButton={{this.showButton}}
+      />
     {{/if}}
   </div>
-  <TopicTimeline::Date @topic={{@topic}} @class="now-date" @onClick={{@jumpBottom}} />
+  <TopicTimeline::Date
+    @topic={{@topic}}
+    @class="now-date"
+    @onClick={{@jumpBottom}}
+  />
 </div>

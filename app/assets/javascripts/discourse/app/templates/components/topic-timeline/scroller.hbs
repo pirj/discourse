@@ -1,3 +1,22 @@
 <div class="timeline-scroller">
-  scroller
+  <div class="timeline-replies">
+    {{this.repliesShort}}
+  </div>
+    if (date) {
+      contents.push(h("div.timeline-ago", timelineDate(date)));
+    }
+
+    if (attrs.showDockedButton && !state.dragging) {
+      contents.push(attachBackButton(this));
+    }
+    let result = [
+      h("div.timeline-handle"),
+      h("div.timeline-scroller-content", contents),
+    ];
+
+    if (attrs.fullScreen) {
+      result = [result[1], result[0]];
+    }
+
+    return result;
 </div>

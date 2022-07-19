@@ -4,7 +4,7 @@ import { relativeAge } from "discourse/lib/formatter";
 import { tracked } from "@glimmer/tracking";
 
 export default class TopicTimelineDate extends GlimmerComponent {
-  @tracked displayTimeLineScrollArea;
+  @tracked displayTimeLineScrollArea = true;
 
   bottomAge = relativeAge(
     new Date(this.args.topic.last_posted_at || this.args.topic.created_at),
@@ -13,7 +13,6 @@ export default class TopicTimelineDate extends GlimmerComponent {
       defaultFormat: this.timelineDate,
     }
   );
-  displayTimeLineScrollArea = true
 
   get label() {
     return this.args.class === "start-date"
