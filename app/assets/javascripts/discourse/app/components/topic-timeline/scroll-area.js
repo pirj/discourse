@@ -52,13 +52,6 @@ export default class TopicTimelineScrollArea extends GlimmerComponent {
     return null;
   }
 
-  @bind
-  updateValue(arg, value) {
-    if (arg && value) {
-      arg = value;
-    }
-  }
-
   get lastReadTop() {
     return Math.round(this.lastReadPercentage * this.scrollareaHeight());
   }
@@ -74,6 +67,39 @@ export default class TopicTimelineScrollArea extends GlimmerComponent {
     );
   }
 
+  constructor() {
+    super(...arguments);
+
+    this.calculatePosition();
+    this.updateValue(this.scrolledPost, this.current);
+    if (this.percentage === null) {
+      return;
+    }
+
+    this.updateValue(this.before, this.scrollareaRemaining() * this.percentage);
+
+    if (this.hasBackPosition) {
+      const lastReadTop = Math.round(
+        this.lastReadPercentage * this.scrollareaHeight()
+      );
+      showButton =
+        before + SCROLLER_HEIGHT - 5 < lastReadTop || before > lastReadTop + 25;
+      this.updateValue(this.showButton, showButton);
+    }
+
+    if (this.hasBackPosition) {
+      const lastReadTop = Math.round(
+        this.lastReadPercentage * this.scrollareaHeight()
+      );
+      this.updateValue(this.lastReadTop, lastReadTop);
+    }
+  }
+
+  @bind
+  updateValue(arg, value) {
+    arg = value;
+  }
+
   @bind
   calculatePosition() {
     const percentage = this.percentage;
@@ -84,9 +110,7 @@ export default class TopicTimelineScrollArea extends GlimmerComponent {
     const scrollPosition =
       this.clamp(Math.floor(total * percentage), 0, total) + 1;
     const current = this.clamp(scrollPosition, 1, total);
-
     const daysAgo = postStream.closestDaysAgoFor(current);
-    let date;
 
     if (daysAgo === undefined) {
       const post = postStream
@@ -94,19 +118,20 @@ export default class TopicTimelineScrollArea extends GlimmerComponent {
         .findBy("id", postStream.get("stream")[current]);
 
       if (post) {
-        date = new Date(post.get("created_at"));
+        this.updateValue(this.date, new Date(post.get("created_at")));
       }
     } else if (daysAgo !== null) {
+      let date;
       date = new Date();
       date.setDate(date.getDate() - daysAgo || 0);
+      this.updateValue(this.date, date);
     } else {
-      date = null;
+      this.updateValue(this.date, null);
     }
 
     this.updateValue(this.current, current);
     this.updateValue(this.scrollPosition, scrollPosition);
     this.updateValue(this.total, total);
-    this.updateValue(this.date, date);
 
     const lastReadId = topic.last_read_post_id;
     const lastReadNumber = topic.last_read_post_number;
@@ -117,46 +142,9 @@ export default class TopicTimelineScrollArea extends GlimmerComponent {
       this.updateValue(this.lastReadPercentage, this._percentFor(topic, idx));
     }
 
-    if (this.args.position !== this.scrollPosition) {
-      this.state.position = result.scrollPosition;
+    if (this.position !== this.scrollPosition) {
+      this.updateValue(this.position, this.scrollPosition);
       this.sendWidgetAction("updatePosition", current);
-    }
-  }
-
-  constructor() {
-    super(...arguments);
-
-    this.calculatePosition();
-    this.updateValue(this.scrolledPost, this.current);
-    const percentage = this.percentage;
-    if (percentage === null) {
-      return;
-    }
-
-    const before = this.scrollareaRemaining() * percentage;
-
-    const hasBackPosition =
-      this.lastRead &&
-      this.lastRead > 3 &&
-      this.lastRead > this.current &&
-      Math.abs(this.lastRead - this.current) > 3 &&
-      Math.abs(this.lastRead - this.total) > 1 &&
-      this.lastRead !== this.total;
-
-    if (hasBackPosition) {
-      const lastReadTop = Math.round(
-        position.lastReadPercentage * this.scrollareaHeight()
-      );
-      showButton =
-        before + SCROLLER_HEIGHT - 5 < lastReadTop || before > lastReadTop + 25;
-      this.updateValue(this.showButton, showButton);
-    }
-
-    if (hasBackPosition) {
-      const lastReadTop = Math.round(
-        position.lastReadPercentage * scrollareaHeight()
-      );
-      this.updateValue(this.lastReadTop, lastReadTop);
     }
   }
 

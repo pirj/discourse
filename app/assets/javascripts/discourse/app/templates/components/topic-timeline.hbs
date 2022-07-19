@@ -1,48 +1,52 @@
-<DSection
-  @class={{concat "topic-timeline timeline-container " this.class}}
-  @prevEvent={{@info.prevEvent}}
-  @loading={{@model.postStream.loading}}
-  @jumpToPost={{this.jumpToPost}}
-  @jumpTop={{this.jumpTop}}
-  @jumpBottom={{this.jumpBottom}}
-  @jumpEnd={{this.jumpEnd}}
-  @jumpToIndex={{this.jumpToIndex}}
-  @toggleMultiSelect={{this.toggleMultiSelect}}
-  @showTopicSlowModeUpdate={{fn (route-action "showTopicSlowModeUpdate") null null}}
-  @deleteTopic={{this.deleteTopic}}
-  @recoverTopic={{this.recoverTopic}}
-  @toggleClosed={{this.toggleClosed}}
-  @toggleArchived={{this.toggleArchived}}
-  @toggleVisibility={{this.toggleVisibility}}
-  @showTopicTimerModal={{fn (route-action "showTopicTimerModal") null null}}
-  @showFeatureTopic={{fn (route-action "showFeatureTopic") null null}}
-  @showChangeTimestamp={{route-action "showChangeTimestamp"}}
-  @resetBumpDate={{this.resetBumpDate}}
-  @convertToPublicTopic={{this.convertToPublicTopic}}
-  @convertToPrivateMessage={{this.convertToPrivateMessage}}
+<div class="timeline-container">
+  <DSection
+    @class={{concat "topic-timeline " this.class}}
+    @prevEvent={{@info.prevEvent}}
+    @loading={{@model.postStream.loading}}
+    @jumpToPost={{this.jumpToPost}}
+    @jumpEnd={{this.jumpEnd}}
+    @jumpToIndex={{this.jumpToIndex}}
+    @toggleMultiSelect={{this.toggleMultiSelect}}
+    @showTopicSlowModeUpdate={{fn (route-action "showTopicSlowModeUpdate") null null}}
+    @deleteTopic={{this.deleteTopic}}
+    @recoverTopic={{this.recoverTopic}}
+    @toggleClosed={{this.toggleClosed}}
+    @toggleArchived={{this.toggleArchived}}
+    @toggleVisibility={{this.toggleVisibility}}
+    @showTopicTimerModal={{fn (route-action "showTopicTimerModal") null null}}
+    @showFeatureTopic={{fn (route-action "showFeatureTopic") null null}}
+    @showChangeTimestamp={{route-action "showChangeTimestamp"}}
+    @resetBumpDate={{this.resetBumpDate}}
+    @convertToPublicTopic={{this.convertToPublicTopic}}
+    @convertToPrivateMessage={{this.convertToPrivateMessage}}
 
-  @fullscreen={{@info.topicProgressExpanded}}
-  @dockAt={{@dockAt}}
-  @dockBottom={{@dockBottom}}
->
-
-  {{#if (and (not @info.topicProgressExpanded) this.currentUser)}}
-    <TopicAdminMenuButton @topic={{@model}} @addKeyboardTargetClass={{true}} />
-  {{/if}}
-
-  <TopicTimeline::ScrollArea
-    @topic={{@model}}
-    @enteredIndex={{@enteredIndex}}
     @fullscreen={{@info.topicProgressExpanded}}
-  />
+    @dockAt={{@dockAt}}
+    @dockBottom={{@dockBottom}}
+  >
 
-  <TopicTimeline::FooterControls
-    @currentUser={{this.currentUser}}
-    @fullscreen={{@info.topicProgressExpanded}}
-    @topic={{@model}}
-    @notificationLevel={{@model.details.notification_level}}
-    @replyToPost={{@replyToPost}}
-    @showSummary={{@showSummary}}
-    @jumpToPostPrompt={{@jumpToPostPrompt}}
-  />
-</DSection>
+    <div class="timeline-controls">
+      {{#if (and (not @info.topicProgressExpanded) this.currentUser)}}
+        <TopicAdminMenuButton @topic={{@model}} @addKeyboardTargetClass={{true}} />
+      {{/if}}
+    </div>
+
+    <TopicTimeline::ScrollArea
+      @topic={{@model}}
+      @enteredIndex={{@enteredIndex}}
+      @fullscreen={{@info.topicProgressExpanded}}
+      @jumpTop={{@jumpTop}}
+      @jumpBottom={{@jumpBottom}}
+    />
+
+    <TopicTimeline::FooterControls
+      @currentUser={{this.currentUser}}
+      @fullscreen={{@info.topicProgressExpanded}}
+      @topic={{@model}}
+      @notificationLevel={{@model.details.notification_level}}
+      @replyToPost={{@replyToPost}}
+      @showSummary={{@showSummary}}
+      @jumpToPostPrompt={{@jumpToPostPrompt}}
+    />
+  </DSection>
+</div>

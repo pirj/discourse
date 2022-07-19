@@ -14,7 +14,6 @@ import { actionDescriptionHtml } from "discourse/widgets/post-small-action";
 import { h } from "virtual-dom";
 import { iconNode } from "discourse-common/lib/icon-library";
 import { later } from "@ember/runloop";
-import { relativeAge } from "discourse/lib/formatter";
 import renderTags from "discourse/lib/render-tags";
 import renderTopicFeaturedLink from "discourse/lib/render-topic-featured-link";
 
@@ -64,14 +63,6 @@ export default class TopicTimeline extends GlimmerComponent {
       title: "topic.timeline.back_description",
       action: "goBack",
     });
-  }
-  @bind
-  timelineDate(date) {
-    const fmt =
-      date.getFullYear() === new Date().getFullYear()
-        ? "long_no_year_no_time"
-        : "timeline_date";
-    return moment(date).format(I18n.t(`dates.${fmt}`));
   }
 
   @bind
@@ -195,52 +186,6 @@ export default class TopicTimeline extends GlimmerComponent {
       }
 
       result.push(h("div.title", elems));
-    }
-
-    result.push(this.attach("timeline-controls", attrs));
-
-    let displayTimeLineScrollArea = true;
-    if (!attrs.mobileView) {
-      const streamLength = attrs.topic.get("postStream.stream.length");
-
-      if (streamLength === 1) {
-        const postsWrapper = document.querySelector(".posts-wrapper");
-        if (postsWrapper && postsWrapper.offsetHeight < 1000) {
-          displayTimeLineScrollArea = false;
-        }
-      }
-    }
-
-    if (displayTimeLineScrollArea) {
-      const bottomAge = relativeAge(
-        new Date(topic.last_posted_at || topic.created_at),
-        {
-          addAgo: true,
-          defaultFormat: timelineDate,
-        }
-      );
-      const scroller = [
-        h(
-          "div.timeline-date-wrapper",
-          this.attach("link", {
-            className: "start-date",
-            rawLabel: timelineDate(createdAt),
-            action: "jumpTop",
-          })
-        ),
-        this.attach("timeline-scrollarea", attrs),
-        h(
-          "div.timeline-date-wrapper",
-          this.attach("link", {
-            className: "now-date",
-            rawLabel: bottomAge,
-            action: "jumpBottom",
-          })
-        ),
-      ];
-
-      result.push(h("div.timeline-scrollarea-wrapper", scroller));
-      result.push(this.attach("timeline-footer-controls", attrs));
     }
 
     return result;
