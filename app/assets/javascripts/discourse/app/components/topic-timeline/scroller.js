@@ -2,7 +2,6 @@ import GlimmerComponent from "discourse/components/glimmer";
 import { bind } from "discourse-common/utils/decorators";
 import { tracked } from "@glimmer/tracking";
 import { SCROLLER_HEIGHT } from "discourse/components/topic-timeline/scroll-area";
-import { clamp } from "discourse/components/topic-timeline/scroll-area";
 
 export default class TopicTimelineScroller extends GlimmerComponent {
   @tracked dragging = false;
@@ -12,7 +11,6 @@ export default class TopicTimelineScroller extends GlimmerComponent {
   get repliesShort() {
     const current = this.args.current;
     const total = this.args.total;
-    debugger;
     return I18n.t(`topic.timeline.replies_short`, { current, total });
   }
 

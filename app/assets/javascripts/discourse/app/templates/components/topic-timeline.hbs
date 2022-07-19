@@ -6,19 +6,6 @@
     @jumpToPost={{this.jumpToPost}}
     @jumpEnd={{this.jumpEnd}}
     @jumpToIndex={{this.jumpToIndex}}
-    @toggleMultiSelect={{this.toggleMultiSelect}}
-    @showTopicSlowModeUpdate={{fn (route-action "showTopicSlowModeUpdate") null null}}
-    @deleteTopic={{this.deleteTopic}}
-    @recoverTopic={{this.recoverTopic}}
-    @toggleClosed={{this.toggleClosed}}
-    @toggleArchived={{this.toggleArchived}}
-    @toggleVisibility={{this.toggleVisibility}}
-    @showTopicTimerModal={{fn (route-action "showTopicTimerModal") null null}}
-    @showFeatureTopic={{fn (route-action "showFeatureTopic") null null}}
-    @showChangeTimestamp={{route-action "showChangeTimestamp"}}
-    @resetBumpDate={{this.resetBumpDate}}
-    @convertToPublicTopic={{this.convertToPublicTopic}}
-    @convertToPrivateMessage={{this.convertToPrivateMessage}}
 
     @fullscreen={{@info.topicProgressExpanded}}
     @dockAt={{@dockAt}}
@@ -27,7 +14,23 @@
 
     <div class="timeline-controls">
       {{#if (and (not @info.topicProgressExpanded) this.currentUser)}}
-        <TopicAdminMenuButton @topic={{@model}} @addKeyboardTargetClass={{true}} />
+        <TopicAdminMenuButton
+          @topic={{@model}}
+          @addKeyboardTargetClass={{true}}
+          @toggleMultiSelect={{@toggleMultiSelect}}
+          @showTopicSlowModeUpdate={{@showTopicSlowModeUpdate}}
+          @deleteTopic={{@deleteTopic}}
+          @recoverTopic={{@recoverTopic}}
+          @toggleClosed={{@toggleClosed}}
+          @toggleArchived={{@toggleArchived}}
+          @toggleVisibility={{@toggleVisibility}}
+          @showTopicTimerModal={{@showTopicTimerModal}}
+          @showFeatureTopic={{@showFeatureTopic}}
+          @showChangeTimestamp={{@showChangeTimestamp}}
+          @resetBumpDate={{@resetBumpDate}}
+          @convertToPublicTopic={{@convertToPublicTopic}}
+          @convertToPrivateMessage={{@convertToPrivateMessage}}
+        />
       {{/if}}
     </div>
 

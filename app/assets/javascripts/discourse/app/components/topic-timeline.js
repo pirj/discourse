@@ -223,14 +223,14 @@ export default class TopicTimeline extends GlimmerComponent {
   }
 
   willDestroy() {
-    if (!this.site.mobileView) {
-      this.appEvents.off("composer:opened", this, this.queueRerender);
-      this.appEvents.off("composer:resized", this, this.queueRerender);
-      this.appEvents.off("composer:closed", this, this.queueRerender);
-      if ("IntersectionObserver" in window) {
-        this.intersectionObserver?.disconnect();
-        this.intersectionObserver = null;
-      }
-    }
+    //if (!this.site.mobileView) {
+    // this.appEvents.off("composer:opened", this, this.queueRerender);
+    // this.appEvents.off("composer:resized", this, this.queueRerender);
+    // this.appEvents.off("composer:closed", this, this.queueRerender);
+    // if ("IntersectionObserver" in window) {
+    //  this.intersectionObserver?.disconnect();
+    // this.intersectionObserver = null;
+    //}
+    //}
   }
 }

@@ -5,7 +5,6 @@ import discourseLater from "discourse-common/lib/later";
 import { action } from "@ember/object";
 
 export const SCROLLER_HEIGHT = 50;
-const LAST_READ_HEIGHT = 20;
 const MIN_SCROLLAREA_HEIGHT = 170;
 const MAX_SCROLLAREA_HEIGHT = 300;
 
@@ -21,19 +20,15 @@ export default class TopicTimelineScrollArea extends GlimmerComponent {
   @tracked date;
   @tracked lastRead = null;
   @tracked lastReadPercentage = null;
-  @tracked position = null;
+  @tracked position;
 
   buildKey = `timeline-scrollarea-${this.args.topic.id}`;
-  style = `height: ${this.scrollareaHeight()}px`;
+  style = `height: ${scrollareaHeight()}px`;
   before = this.scrollareaRemaining() * this.percentage;
-  after = this.scrollareaHeight() - this.args.before - SCROLLER_HEIGHT;
-
-  get scrolledPost() {
-    return null;
-  }
+  after = scrollareaHeight() - this.args.before - SCROLLER_HEIGHT;
 
   get lastReadTop() {
-    return Math.round(this.lastReadPercentage * this.scrollareaHeight());
+    return Math.round(this.lastReadPercentage * scrollareaHeight());
   }
 
   get hasBackPosition() {
@@ -51,80 +46,66 @@ export default class TopicTimelineScrollArea extends GlimmerComponent {
     super(...arguments);
 
     this.calculatePosition();
-    this.updateValue(this.scrolledPost, this.current);
     if (this.percentage === null) {
       return;
     }
 
-    this.updateValue(this.before, this.scrollareaRemaining() * this.percentage);
+    this.before = this.scrollareaRemaining() * this.percentage;
 
     if (this.hasBackPosition) {
       const lastReadTop = Math.round(
-        this.lastReadPercentage * this.scrollareaHeight()
+        this.lastReadPercentage * scrollareaHeight()
       );
       showButton =
         before + SCROLLER_HEIGHT - 5 < lastReadTop || before > lastReadTop + 25;
-      this.updateValue(this.showButton, showButton);
+      this.showButton = showButton;
     }
 
     if (this.hasBackPosition) {
       const lastReadTop = Math.round(
-        this.lastReadPercentage * this.scrollareaHeight()
+        this.lastReadPercentage * scrollareaHeight()
       );
-      this.updateValue(this.lastReadTop, lastReadTop);
+      this.lastReadTop = lastReadTop;
     }
-  }
-
-  @bind
-  updateValue(arg, value) {
-    arg = value;
   }
 
   @bind
   calculatePosition() {
-    const percentage = this.percentage;
     const topic = this.args.topic;
     const postStream = topic.get("postStream");
-    const total = postStream.get("filteredPostsCount");
+    this.total = postStream.get("filteredPostsCount");
 
-    const scrollPosition =
-      this.clamp(Math.floor(total * percentage), 0, total) + 1;
-    const current = this.clamp(scrollPosition, 1, total);
-    const daysAgo = postStream.closestDaysAgoFor(current);
+    this.scrollPosition =
+      this.clamp(Math.floor(this.total * this.percentage), 0, this.total) + 1;
+    this.current = this.clamp(this.scrollPosition, 1, this.total);
+    const daysAgo = postStream.closestDaysAgoFor(this.current);
 
     if (daysAgo === undefined) {
       const post = postStream
         .get("posts")
-        .findBy("id", postStream.get("stream")[current]);
+        .findBy("id", postStream.get("stream")[this.current]);
 
       if (post) {
-        this.updateValue(this.date, new Date(post.get("created_at")));
+        this.date = new Date(post.get("created_at"));
       }
     } else if (daysAgo !== null) {
-      let date;
-      date = new Date();
-      date.setDate(date.getDate() - daysAgo || 0);
-      this.updateValue(this.date, date);
+      let date = new Date();
+      this.date = date.setDate(date.getDate() - daysAgo || 0);
     } else {
-      this.updateValue(this.date, null);
+      this.date = null;
     }
-
-    this.updateValue(this.current, current);
-    this.updateValue(this.scrollPosition, scrollPosition);
-    this.updateValue(this.total, total);
 
     const lastReadId = topic.last_read_post_id;
     const lastReadNumber = topic.last_read_post_number;
 
     if (lastReadId && lastReadNumber) {
       const idx = postStream.get("stream").indexOf(lastReadId) + 1;
-      this.updateValue(this.read, idx);
-      this.updateValue(this.lastReadPercentage, this._percentFor(topic, idx));
+      this.read = idx;
+      this.lastReadPercentage = this._percentFor(topic, idx);
     }
 
     if (this.position !== this.scrollPosition) {
-      this.updateValue(this.position, this.scrollPosition);
-      this.updateScrollPosition(current);
+      this.updateScrollPosition(this.current);
     }
   }
 
@@ -134,8 +115,7 @@ export default class TopicTimelineScrollArea extends GlimmerComponent {
       return;
     }
 
-    this.updateValue(this.position, scrollPosition);
-    this.updateValue();
+    this.position = scrollPosition;
     this.excerpt = "";
 
     const stream = this.args.topic.get("postStream");
@@ -148,7 +128,7 @@ export default class TopicTimelineScrollArea extends GlimmerComponent {
 
       // we have an off by one, stream is zero based,
       stream.excerpt(scrollPosition - 1).then((info) => {
-        if (info && this.state.position === scrollPosition) {
+        if (info && this.position === scrollPosition) {
           let excerpt = "";
 
           if (info.username) {
@@ -156,7 +136,7 @@ export default class TopicTimelineScrollArea extends GlimmerComponent {
           }
 
           if (info.excerpt) {
-            this.state.excerpt = excerpt + info.excerpt;
+            this.excerpt = excerpt + info.excerpt;
           } else if (info.action_code) {
             this.state.excerpt = `${excerpt} ${actionDescriptionHtml(
               info.action_code,
@@ -173,7 +153,6 @@ export default class TopicTimelineScrollArea extends GlimmerComponent {
 
   commit() {
     this.calculatePosition();
-    this.updateValue(this.scrolledPost, this.current);
 
     if (this.current === this.scrollPosition) {
       this.sendWidgetAction("jumpToIndex", this.current);
@@ -207,26 +186,25 @@ export default class TopicTimelineScrollArea extends GlimmerComponent {
 
     const percentage = this.clamp(parseFloat(y - areaTop) / $area.height());
 
-    this.updateValue(this.percentage, percentage);
+    this.percentage = percentage;
   }
 
   scrollareaRemaining() {
-    return this.scrollareaHeight() - SCROLLER_HEIGHT;
+    return scrollareaHeight() - SCROLLER_HEIGHT;
   }
+}
 
-  scrollareaHeight() {
-    const composerHeight =
-        document.getElementById("reply-control").offsetHeight || 0,
-      headerHeight =
-        document.querySelectorAll(".d-header")[0].offsetHeight || 0;
+export function scrollareaHeight() {
+  const composerHeight =
+      document.getElementById("reply-control").offsetHeight || 0,
+    headerHeight = document.querySelectorAll(".d-header")[0].offsetHeight || 0;
 
-    // scrollarea takes up about half of the timeline's height
-    const availableHeight =
-      (window.innerHeight - composerHeight - headerHeight) / 2;
+  // scrollarea takes up about half of the timeline's height
+  const availableHeight =
+    (window.innerHeight - composerHeight - headerHeight) / 2;
 
-    return Math.max(
-      MIN_SCROLLAREA_HEIGHT,
-      Math.min(availableHeight, MAX_SCROLLAREA_HEIGHT)
-    );
-  }
+  return Math.max(
+    MIN_SCROLLAREA_HEIGHT,
+    Math.min(availableHeight, MAX_SCROLLAREA_HEIGHT)
+  );
 }
