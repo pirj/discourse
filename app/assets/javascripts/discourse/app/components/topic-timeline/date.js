@@ -10,13 +10,13 @@ export default class TopicTimelineDate extends GlimmerComponent {
     new Date(this.args.topic.last_posted_at || this.args.topic.created_at),
     {
       addAgo: true,
-      defaultFormat: this.timelineDate,
+      defaultFormat: timelineDate,
     }
   );
 
   get label() {
     return this.args.class === "start-date"
-      ? this.timelineDate(this.args.topic.createdAt)
+      ? timelineDate(this.args.topic.createdAt)
       : this.bottomAge;
   }
 
@@ -39,13 +39,12 @@ export default class TopicTimelineDate extends GlimmerComponent {
   updateDisplayTimeLineScrollArea(arg) {
     this.displayTimeLineScrollArea = arg;
   }
+}
 
-  @bind
-  timelineDate(date) {
-    const fmt =
-      date.getFullYear() === new Date().getFullYear()
-        ? "long_no_year_no_time"
-        : "timeline_date";
-    return moment(date).format(I18n.t(`dates.${fmt}`));
-  }
+export function timelineDate(date) {
+  const fmt =
+    date.getFullYear() === new Date().getFullYear()
+      ? "long_no_year_no_time"
+      : "timeline_date";
+  return moment(date).format(I18n.t(`dates.${fmt}`));
 }

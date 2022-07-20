@@ -22,10 +22,9 @@ export default class TopicTimelineScrollArea extends GlimmerComponent {
   @tracked lastReadPercentage = null;
   @tracked position;
 
-  buildKey = `timeline-scrollarea-${this.args.topic.id}`;
   style = `height: ${scrollareaHeight()}px`;
   before = this.scrollareaRemaining() * this.percentage;
-  after = scrollareaHeight() - this.args.before - SCROLLER_HEIGHT;
+  after = scrollareaHeight() - this.before - SCROLLER_HEIGHT;
 
   get lastReadTop() {
     return Math.round(this.lastReadPercentage * scrollareaHeight());

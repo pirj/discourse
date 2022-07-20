@@ -2,21 +2,28 @@
   <div class="timeline-replies">
     {{this.repliesShort}}
   </div>
-    if (date) {
-      contents.push(h("div.timeline-ago", timelineDate(date)));
-    }
 
-    if (attrs.showDockedButton && !state.dragging) {
-      contents.push(attachBackButton(this));
-    }
-    let result = [
-      h("div.timeline-handle"),
-      h("div.timeline-scroller-content", contents),
-    ];
+  {{#if this.date}}
+    <div class="timeline-ago">
+      {{this.timelineAgo}}
+    </div>
+  {{/if}}
 
-    if (attrs.fullScreen) {
-      result = [result[1], result[0]];
-    }
+  {{#if (and this.showDockedButton (not this.dragging)) }}
+    attachBackButton(this)
+  {{/if}}
 
-    return result;
+  {{#if @fullscreen}}
+    <div class="timeline-scroller-content">
+      {{this.contents}}
+    </div>
+    <div class="timeline-handle">
+    </div>
+  {{else}}
+    <div class="timeline-handle">
+    </div>
+    <div class="timeline-scroller-content">
+      {{this.contents}}
+    </div>
+  {{/if}}
 </div>

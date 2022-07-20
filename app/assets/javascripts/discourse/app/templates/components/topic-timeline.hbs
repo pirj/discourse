@@ -3,10 +3,6 @@
     @class={{concat "topic-timeline " this.class}}
     @prevEvent={{@info.prevEvent}}
     @loading={{@model.postStream.loading}}
-    @jumpToPost={{this.jumpToPost}}
-    @jumpEnd={{this.jumpEnd}}
-    @jumpToIndex={{this.jumpToIndex}}
-
     @fullscreen={{@info.topicProgressExpanded}}
     @dockAt={{@dockAt}}
     @dockBottom={{@dockBottom}}
@@ -40,6 +36,8 @@
       @fullscreen={{@info.topicProgressExpanded}}
       @jumpTop={{@jumpTop}}
       @jumpBottom={{@jumpBottom}}
+      @jumpEnd={{@jumpEnd}}
+      @jumpToIndex={{@jumpToIndex}}
     />
 
     <TopicTimeline::FooterControls
