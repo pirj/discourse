@@ -1991,6 +1991,7 @@ developer:
     hidden: true
   enable_glimmer_topic_timeline:
     default: false
+    client: true
     hidden: true
 
 embedding:
