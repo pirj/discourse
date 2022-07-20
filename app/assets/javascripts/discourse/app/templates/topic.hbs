@@ -105,7 +105,6 @@
         <PluginOutlet @name="topic-navigation" @connectorTagName="div" @args={{hash topic=this.model}} />
 
         {{#if info.renderTimeline}}
-          {{log this.siteSettings}}
           {{#if this.siteSettings.enable_glimmer_topic_timeline}}
             <GlimmerTopicTimeline
               @info={{info}}

@@ -56,7 +56,10 @@ export default class TopicTimelineScrollArea extends GlimmerComponent {
         this.lastReadPercentage * scrollareaHeight()
       );
       showButton =
-        before + SCROLLER_HEIGHT - 5 < lastReadTop || before > lastReadTop + 25;
+        this.before + SCROLLER_HEIGHT - 5 < lastReadTop ||
+        this.before > lastReadTop + 25;
+      console.log(showButton);
+      console.log(showButton);
       this.showButton = showButton;
     }
 
@@ -66,6 +69,20 @@ export default class TopicTimelineScrollArea extends GlimmerComponent {
       );
       this.lastReadTop = lastReadTop;
     }
+  }
+
+  @action goBack() {
+    this.args.jumpToIndex(this.lastRead);
+  }
+
+  @action
+  updatePercentage(y) {
+    const $area = $(".timeline-scrollarea");
+    const areaTop = $area.offset().top;
+
+    const percentage = this.clamp(parseFloat(y - areaTop) / $area.height());
+
+    this.percentage = percentage;
   }
 
   @bind
@@ -99,7 +116,7 @@ export default class TopicTimelineScrollArea extends GlimmerComponent {
 
     if (lastReadId && lastReadNumber) {
       const idx = postStream.get("stream").indexOf(lastReadId) + 1;
-      this.read = idx;
+      this.lastRead = idx;
       this.lastReadPercentage = this._percentFor(topic, idx);
     }
 
@@ -144,7 +161,7 @@ export default class TopicTimelineScrollArea extends GlimmerComponent {
             )}`;
           }
 
-          this.scheduleRerender();
+          this.queueRerender();
         }
       });
     }, 50);
@@ -169,23 +186,9 @@ export default class TopicTimelineScrollArea extends GlimmerComponent {
     return this.clamp(parseFloat(postIndex - 1.0) / total);
   }
 
-  goBack() {
-    this.sendWidgetAction("jumpToIndex", this.position().lastRead);
-  }
-
   @bind
   clamp(p, min = 0.0, max = 1.0) {
     return Math.max(Math.min(p, max), min);
-  }
-
-  @action
-  updatePercentage(y) {
-    const $area = $(".timeline-scrollarea");
-    const areaTop = $area.offset().top;
-
-    const percentage = this.clamp(parseFloat(y - areaTop) / $area.height());
-
-    this.percentage = percentage;
   }
 
   scrollareaRemaining() {

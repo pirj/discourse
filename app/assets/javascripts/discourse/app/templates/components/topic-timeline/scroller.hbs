@@ -10,7 +10,7 @@
   {{/if}}
 
   {{#if (and this.showDockedButton (not this.dragging)) }}
-    attachBackButton(this)
+    <TopicTimeline::BackButton @onClick={{@goBack}}/>
   {{/if}}
 
   {{#if @fullscreen}}

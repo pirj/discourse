@@ -6,7 +6,11 @@
   />
   <div class="timeline-scrollarea">
     <TopicTimeline::Padding @height={{this.before}} />
-    <TopicTimeline::Scroller @current={{this.current}} @total={{this.total}} />
+    <TopicTimeline::Scroller
+      @current={{this.current}}
+      @total={{this.total}}
+      @goBack={{this.goBack}}
+    />
     <TopicTimeline::Padding @height={{this.after}} />
 
     {{#if this.lastReadTop}}
@@ -14,6 +18,7 @@
         @top={{this.lastReadTop}}
         @lastRead={{this.position.lastRead}}
         @showButton={{this.showButton}}
+        @goBack={{this.goBack}}
       />
     {{/if}}
   </div>

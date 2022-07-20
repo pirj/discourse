@@ -8,15 +8,6 @@ export default class TopicTimelineLastRead extends GlimmerComponent {
 
   get top() {
     const bottom = scrollareaHeight() - LAST_READ_HEIGHT / 2;
-    this.args.top > bottom ? bottom : this.args.top;
-  }
-
-  html(attrs) {
-    const result = [iconNode("minus", { class: "progress" })];
-    if (attrs.showButton) {
-      result.push(attachBackButton(this));
-    }
-
-    return result;
+    return this.args.top > bottom ? bottom : this.args.top;
   }
 }

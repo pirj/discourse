@@ -21,23 +21,18 @@ export default class TopicTimelineScroller extends GlimmerComponent {
 
   @bind
   drag(e) {
-    this.updateDragging(true);
+    this.dragging = true;
     // update to send value to parent
     this.sendWidgetAction("updatePercentage", e.pageY);
   }
 
   @bind
   dragEnd(e) {
-    this.updateDragging(false);
+    this.dragging = false;
     if ($(e.target).is("button")) {
       this.sendWidgetAction("goBack");
     } else {
       this.sendWidgetAction("commit");
     }
-  }
-
-  @bind
-  updateDragging(dragging) {
-    this.dragging = dragging;
   }
 }
