@@ -1989,6 +1989,9 @@ developer:
     default: false
     client: true
     hidden: true
+  enable_glimmer_topic_timeline:
+    default: false
+    hidden: true
 
 embedding:
   embed_by_username:
