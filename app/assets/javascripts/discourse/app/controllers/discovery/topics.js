@@ -24,6 +24,11 @@ const controllerOpts = {
   showTopicPostBadges: not("new"),
   redirectedReason: alias("currentUser.redirected_to_top.reason"),
 
+  @discourseComputed("model.filter")
+  canEditWelcomeTopic(filter) {
+    return this.currentUser && this.currentUser.staff && filter === "latest";
+  },
+
   expandGloballyPinned: false,
   expandAllPinned: false,
 
