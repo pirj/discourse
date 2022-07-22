@@ -14,7 +14,7 @@ export default class TopicTimelineScrollArea extends GlimmerComponent {
   @tracked current;
   @tracked percentage = this._percentFor(
     this.args.topic,
-    this.args.enteredIndex + 1
+    this.args.enteredIndex
   );
   @tracked total;
   @tracked date;
