@@ -18,7 +18,6 @@ export default class TopicTimelineScrollArea extends GlimmerComponent {
   );
   @tracked total;
   @tracked date;
-  @tracked lastRead = null;
   @tracked lastReadPercentage = null;
   @tracked position;
 
@@ -28,6 +27,10 @@ export default class TopicTimelineScrollArea extends GlimmerComponent {
 
   get lastReadTop() {
     return Math.round(this.lastReadPercentage * scrollareaHeight());
+  }
+
+  get showDockedButton() {
+    return !this.site.mobileView && this.hasBackPosition && !this.showButton;
   }
 
   get hasBackPosition() {
@@ -52,22 +55,19 @@ export default class TopicTimelineScrollArea extends GlimmerComponent {
     this.before = this.scrollareaRemaining() * this.percentage;
 
     if (this.hasBackPosition) {
-      const lastReadTop = Math.round(
+      this.lastReadTop = Math.round(
         this.lastReadPercentage * scrollareaHeight()
       );
       showButton =
         this.before + SCROLLER_HEIGHT - 5 < lastReadTop ||
-        this.before > lastReadTop + 25;
-      console.log(showButton);
-      console.log(showButton);
+        this.before > this.lastReadTop + 25;
       this.showButton = showButton;
     }
 
     if (this.hasBackPosition) {
-      const lastReadTop = Math.round(
+      this.lastReadTop = Math.round(
         this.lastReadPercentage * scrollareaHeight()
       );
-      this.lastReadTop = lastReadTop;
     }
   }
 
@@ -96,20 +96,23 @@ export default class TopicTimelineScrollArea extends GlimmerComponent {
     this.current = this.clamp(this.scrollPosition, 1, this.total);
     const daysAgo = postStream.closestDaysAgoFor(this.current);
 
+    let date;
     if (daysAgo === undefined) {
       const post = postStream
         .get("posts")
         .findBy("id", postStream.get("stream")[this.current]);
 
       if (post) {
-        this.date = new Date(post.get("created_at"));
+        date = new Date(post.get("created_at"));
       }
     } else if (daysAgo !== null) {
-      let date = new Date();
-      this.date = date.setDate(date.getDate() - daysAgo || 0);
+      date = new Date();
+      date.setDate(date.getDate() - daysAgo || 0);
     } else {
-      this.date = null;
+      date = null;
     }
+
+    this.date = date;
 
     const lastReadId = topic.last_read_post_id;
     const lastReadNumber = topic.last_read_post_number;

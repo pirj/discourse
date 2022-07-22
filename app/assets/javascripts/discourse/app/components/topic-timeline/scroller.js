@@ -16,7 +16,7 @@ export default class TopicTimelineScroller extends GlimmerComponent {
   }
 
   get timelineAgo() {
-    return timelineDate(this.date);
+    return timelineDate(this.args.date);
   }
 
   @bind

@@ -3,7 +3,6 @@
     @class={{concat "topic-timeline " this.class}}
     @prevEvent={{@info.prevEvent}}
     @loading={{@model.postStream.loading}}
-    @fullscreen={{@info.topicProgressExpanded}}
     @dockAt={{@dockAt}}
     @dockBottom={{@dockBottom}}
   >
@@ -33,16 +32,16 @@
     <TopicTimeline::ScrollArea
       @topic={{@model}}
       @enteredIndex={{@enteredIndex}}
-      @fullscreen={{@info.topicProgressExpanded}}
       @jumpTop={{@jumpTop}}
       @jumpBottom={{@jumpBottom}}
       @jumpEnd={{@jumpEnd}}
       @jumpToIndex={{@jumpToIndex}}
+      @fullscreen={{@fullscreen}}
     />
 
     <TopicTimeline::FooterControls
       @currentUser={{this.currentUser}}
-      @fullscreen={{@info.topicProgressExpanded}}
+      @fullscreen={{@fullscreen}}
       @topic={{@model}}
       @notificationLevel={{@model.details.notification_level}}
       @replyToPost={{@replyToPost}}
