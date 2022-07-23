@@ -2,7 +2,7 @@
 
 require 'introduction_updater'
 
-describe IntroductionUpdater do
+RSpec.describe IntroductionUpdater do
   describe "#get_summary" do
     subject { IntroductionUpdater.new(Fabricate(:admin)) }
 
