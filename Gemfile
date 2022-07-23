@@ -157,7 +157,11 @@ group :test do
 end
 
 group :test, :development do
-  gem 'rspec'
+  gem 'rspec', github: 'rspec/rspec', branch: '4-0-dev'
+  gem 'rspec-core', github: 'rspec/rspec-core', branch: '4-0-dev'
+  gem 'rspec-expectations', github: 'rspec/rspec-expectations', branch: '4-0-dev'
+  gem 'rspec-mocks', github: 'rspec/rspec-mocks', branch: '4-0-dev'
+  gem 'rspec-support', github: 'rspec/rspec-support', branch: '4-0-dev'
   gem 'listen', require: false
   gem 'certified', require: false
   gem 'fabrication', require: false
@@ -165,10 +169,10 @@ group :test, :development do
 
   gem 'rb-fsevent', require: RUBY_PLATFORM =~ /darwin/i ? 'rb-fsevent' : false
 
-  gem 'rspec-rails'
+  gem 'rspec-rails', github: 'pirj/rspec-rails', branch: '4-0-dev-compatible'
 
   gem 'shoulda-matchers', require: false
-  gem 'rspec-html-matchers'
+  gem 'rspec-html-matchers', github: 'pirj/rspec-html-matchers', branch: '4-0-dev-compatible'
   gem 'byebug', require: ENV['RM_INFO'].nil?, platform: :mri
   gem 'rubocop-discourse', require: false, github: 'discourse/rubocop-discourse'
   gem 'parallel_tests'

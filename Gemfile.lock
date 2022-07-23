@@ -13,6 +13,72 @@ GIT
       rubocop (>= 1.1.0)
       rubocop-rspec (>= 2.0.0)
 
+GIT
+  remote: https://github.com/pirj/rspec-html-matchers.git
+  revision: 5dca76b04390bbdd674a35a7e905d4affc778a1f
+  branch: 4-0-dev-compatible
+  specs:
+    rspec-html-matchers (0.9.4)
+      nokogiri (~> 1)
+      rspec (>= 3.0.0.a, < 5)
+
+GIT
+  remote: https://github.com/pirj/rspec-rails.git
+  revision: df191cba3ba345a2a221321eca6a1c053909ec03
+  branch: 4-0-dev-compatible
+  specs:
+    rspec-rails (6.0.0.pre)
+      actionpack (>= 6.1)
+      activesupport (>= 6.1)
+      railties (>= 6.1)
+      rspec-core (= 4.0.0.pre)
+      rspec-expectations (= 4.0.0.pre)
+      rspec-mocks (= 4.0.0.pre)
+      rspec-support (= 4.0.0.pre)
+
+GIT
+  remote: https://github.com/rspec/rspec-core.git
+  revision: cdbf3cb38a3d590849196513bed8f20ae562be61
+  branch: 4-0-dev
+  specs:
+    rspec-core (4.0.0.pre)
+      rspec-support (= 4.0.0.pre)
+
+GIT
+  remote: https://github.com/rspec/rspec-expectations.git
+  revision: dd17ec585f71d78ebf0bc3782aef8fd950078393
+  branch: 4-0-dev
+  specs:
+    rspec-expectations (4.0.0.pre)
+      diff-lcs (>= 1.4.4, < 2.0)
+      rspec-support (= 4.0.0.pre)
+
+GIT
+  remote: https://github.com/rspec/rspec-mocks.git
+  revision: 8372ed222207f34328b7be7731cc394dbc52cd40
+  branch: 4-0-dev
+  specs:
+    rspec-mocks (4.0.0.pre)
+      diff-lcs (>= 1.4.4, < 2.0)
+      rspec-support (= 4.0.0.pre)
+
+GIT
+  remote: https://github.com/rspec/rspec-support.git
+  revision: 4f900500a6ceefdb00b0d8460d14be0c909cfd11
+  branch: 4-0-dev
+  specs:
+    rspec-support (4.0.0.pre)
+
+GIT
+  remote: https://github.com/rspec/rspec.git
+  revision: 1eeb766f1b53f51ab2d15693777348f96628f61c
+  branch: 4-0-dev
+  specs:
+    rspec (4.0.0.pre)
+      rspec-core (= 4.0.0.pre)
+      rspec-expectations (= 4.0.0.pre)
+      rspec-mocks (= 4.0.0.pre)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -388,30 +454,6 @@ GEM
       chunky_png (~> 1.0)
       rqrcode_core (~> 1.0)
     rqrcode_core (1.2.0)
-    rspec (3.11.0)
-      rspec-core (~> 3.11.0)
-      rspec-expectations (~> 3.11.0)
-      rspec-mocks (~> 3.11.0)
-    rspec-core (3.11.0)
-      rspec-support (~> 3.11.0)
-    rspec-expectations (3.11.0)
-      diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.11.0)
-    rspec-html-matchers (0.9.4)
-      nokogiri (~> 1)
-      rspec (>= 3.0.0.a, < 4)
-    rspec-mocks (3.11.1)
-      diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.11.0)
-    rspec-rails (5.1.2)
-      actionpack (>= 5.2)
-      activesupport (>= 5.2)
-      railties (>= 5.2)
-      rspec-core (~> 3.10)
-      rspec-expectations (~> 3.10)
-      rspec-mocks (~> 3.10)
-      rspec-support (~> 3.10)
-    rspec-support (3.11.0)
     rss (0.2.9)
       rexml
     rswag-specs (2.5.1)
@@ -612,9 +654,13 @@ DEPENDENCIES
   rinku
   rotp
   rqrcode
-  rspec
-  rspec-html-matchers
-  rspec-rails
+  rspec!
+  rspec-core!
+  rspec-expectations!
+  rspec-html-matchers!
+  rspec-mocks!
+  rspec-rails!
+  rspec-support!
   rss
   rswag-specs
   rubocop-discourse!
